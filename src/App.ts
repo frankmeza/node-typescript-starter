@@ -37,6 +37,12 @@ class App {
       res.json(people)
     })
 
+    router.delete('/person/:id', (req, res) => {
+      const id = req.params.id
+      const updatedPeopleList = this.persistence.deletePerson(id)
+      res.json(updatedPeopleList)
+    })
+
     this.express.use('/', router)
   }
 }
