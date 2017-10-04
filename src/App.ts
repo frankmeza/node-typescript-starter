@@ -9,8 +9,8 @@ class App {
     this.express = express()
     this.express.use(bodyParser.urlencoded({ extended: false }))
     this.express.use(bodyParser.json())
+
     this.persistence = new Persistence()
-    
     this.mountRoutes()
   }
 
@@ -27,8 +27,8 @@ class App {
 
     router.post('/person', (req, res) => {
       const person = req.body
-      // const returned = this.persistence.addPerson(person)
-      res.json(person)
+      const people = this.persistence.addPerson(person)
+      res.json(people)
     })
 
     this.express.use('/', router)
