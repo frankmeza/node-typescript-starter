@@ -34,14 +34,27 @@ class App {
     router.post('/person', (req, res) => {
       const person = req.body
       const people = this.persistence.addPerson(person)
-      res.json(people)
+      res.json({good: true})
+    })
+    
+// // PETS
+
+    router.get('/person/:id/pets', (req, res) => {
+      const id = req.params.id
+      res.json(this.persistence.getPetsByPersonId(id))
     })
 
-    router.delete('/person/:id', (req, res) => {
-      const id = req.params.id
-      const updatedPeopleList = this.persistence.deletePerson(id)
-      res.json(updatedPeopleList)
+    router.post('/pets', (req, res) => {
+      const pet = req.body
+      const obj = this.persistence.addPet(pet)
+      res.json(obj)
     })
+
+    // router.delete('/person/:id', (req, res) => {
+    //   const id = req.params.id
+    //   const updatedPeopleList = this.persistence.deletePerson(id)
+    //   res.json(updatedPeopleList)
+    // })
 
     this.express.use('/', router)
   }
