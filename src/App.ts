@@ -1,4 +1,5 @@
 import * as express from 'express'
+import * as bodyParser from 'body-parser'
 import Persistence from './Persistence'
 
 class App {
@@ -6,6 +7,8 @@ class App {
   persistence
   constructor () {
     this.express = express()
+    this.express.use(bodyParser.urlencoded({ extended: false }))
+    this.express.use(bodyParser.json())
     this.persistence = new Persistence()
     
     this.mountRoutes()
@@ -13,8 +16,19 @@ class App {
 
   private mountRoutes (): void {
     const router = express.Router()
+
+    router.get('/', (req, res) => {
+      res.json({true: true})
+    })
+
     router.get('/people', (req, res) => {
-      res.json( this.persistence.getPeople())
+      res.json(this.persistence.getPeople())
+    })
+
+    router.post('/person', (req, res) => {
+      const person = req.body
+      // const returned = this.persistence.addPerson(person)
+      res.json(person)
     })
 
     this.express.use('/', router)
