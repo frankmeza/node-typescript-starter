@@ -5,6 +5,7 @@ import Persistence from './Persistence'
 class App {
   public express
   persistence
+
   constructor () {
     this.express = express()
     this.express.use(bodyParser.urlencoded({ extended: false }))
@@ -23,6 +24,11 @@ class App {
 
     router.get('/people', (req, res) => {
       res.json(this.persistence.getPeople())
+    })
+
+    router.get('/person/:id', (req, res) => {
+      const id = req.params.id
+      res.json(this.persistence.getPerson(id))
     })
 
     router.post('/person', (req, res) => {

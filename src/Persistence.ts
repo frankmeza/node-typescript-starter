@@ -20,6 +20,10 @@ class Persistence {
     return this.people
   }
 
+  getPerson(id) {
+    return this.people.items[id]
+  }
+
   addPerson(person) {
     const people = this.people
     const peopleObject = { ...people }
