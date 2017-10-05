@@ -23,46 +23,45 @@ class App {
 
     // PEOPLE
     // index people
-    router.get('/people', (req, res) => {
+    router.get('/persons', (req, res) => {
       res.json(this.persistence.getPeople())
     })
 
     // show person
-    router.get('/person/:id', (req, res) => {
+    router.get('/persons/:id', (req, res) => {
       const id = req.params.id
       res.json(this.persistence.getPerson(id))
     })
 
     // create person
-    router.post('/person', (req, res) => {
+    router.post('/persons', (req, res) => {
       const person = req.body
       const people = this.persistence.addPerson(person)
-      res.json({good: true})
+      res.sendStatus(201)
     })
     
     // update person
-    router.put('/person', (req, res) => {
-      const updatedAttributes = req.body
-      const updatedPerson = this.persistence.updatePerson(updatedAttributes)
-      res.json({good: true})
+    router.put('/persons', (req, res) => {
+      const person = req.body
+      this.persistence.updatePerson(person)
+      res.sendStatus(204)
     })
     
     // delete person
-    router.delete('/person/:id', (req, res) => {
+    router.delete('/persons/:id', (req, res) => {
       const id = req.params.id
-      const updatedPeopleList = this.persistence.deletePerson(id)
-      res.json(updatedPeopleList)
+      this.persistence.deletePerson(id)
+      res.sendStatus(204)
     })
     
     // PETS
-
     // index pets
     router.get('/pets', (req, res) => {
       res.json(this.persistence.getPets())
     })
     
     // index pets per person
-    router.get('/person/:id/pets', (req, res) => {
+    router.get('/persons/:id/pets', (req, res) => {
       const id = req.params.id
       res.json(this.persistence.getPetsByPersonId(id))
     })
@@ -70,29 +69,28 @@ class App {
     // show pet
     router.get('/pets/:id', (req, res) => {
       const id = req.params.id
-      const pet = this.persistence.getPet(id)
-      res.json(pet)
+      res.json(this.persistence.getPet(id))
     })
     
     // create pet
     router.post('/pets', (req, res) => {
       const pet = req.body
-      const obj = this.persistence.addPet(pet)
-      res.json(obj)
+      this.persistence.addPet(pet) 
+      res.sendStatus(201)
     })
     
     // update pet
     router.put('/pets', (req, res) => {
-      const updatedAttributes = req.body
-      this.persistence.updatePet(updatedAttributes)
-      res.json({good: true})
+      const pet = req.body
+      this.persistence.updatePet(pet)
+      res.sendStatus(204)
     })
     
     // delete pet
     router.delete('/pets/:id', (req, res) => {
       const id = req.params.id
-      const pet = this.persistence.deletePet(id)
-      res.json(pet)
+      this.persistence.deletePet(id)
+      res.sendStatus(204)
     })
 
     this.express.use('/', router)
