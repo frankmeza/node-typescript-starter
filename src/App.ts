@@ -76,6 +76,13 @@ class App {
       this.persistence.updatePet(id, updatedAttributes)
       res.json({good: true})
     })
+    
+    // delete pet
+    router.delete('/pets/:id', (req, res) => {
+      const id = req.params.id
+      this.persistence.deletePet(id)
+      res.json({good: true})
+    })
 
     this.express.use('/', router)
   }
