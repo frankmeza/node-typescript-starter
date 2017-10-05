@@ -40,11 +40,10 @@ class App {
       res.json({good: true})
     })
     
-    // patch person
-    router.patch('/person/:id', (req, res) => {
-      const id = req.params.id
+    // put person
+    router.put('/person', (req, res) => {
       const updatedAttributes = req.body
-      const updatedPerson = this.persistence.updatePerson(id, updatedAttributes)
+      const updatedPerson = this.persistence.updatePerson(updatedAttributes)
       res.json({good: true})
     })
     
@@ -56,10 +55,23 @@ class App {
     })
     
     // PETS
+
+    // index pets
+    router.get('/pets', (req, res) => {
+      res.json(this.persistence.getPets())
+    })
+    
     // index pets per person
     router.get('/person/:id/pets', (req, res) => {
       const id = req.params.id
       res.json(this.persistence.getPetsByPersonId(id))
+    })
+
+    // show pet
+    router.get('/pets/:id', (req, res) => {
+      const id = req.params.id
+      const pet = this.persistence.getPet(id)
+      res.json(pet)
     })
     
     // create pet
@@ -69,19 +81,18 @@ class App {
       res.json(obj)
     })
     
-    // patch pet
-    router.patch('/pets/:id', (req, res) => {
-      const id = req.params.id
+    // put pet
+    router.put('/pets', (req, res) => {
       const updatedAttributes = req.body
-      this.persistence.updatePet(id, updatedAttributes)
+      this.persistence.updatePet(updatedAttributes)
       res.json({good: true})
     })
     
     // delete pet
     router.delete('/pets/:id', (req, res) => {
       const id = req.params.id
-      this.persistence.deletePet(id)
-      res.json({good: true})
+      const pet = this.persistence.deletePet(id)
+      res.json(pet)
     })
 
     this.express.use('/', router)
