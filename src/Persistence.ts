@@ -27,17 +27,17 @@ class Persistence {
   }
 
   // PEOPLE
-  // index
+  // index 
   getPeople() {
     return this.people.sort.map(id => this.getPerson(id))
   }
 
-  // show
+  // show person
   getPerson(id) {
     return this.people.items[id]
   }
 
-  // create
+  // create person
   addPerson(person) {
     const newItems = { ...this.people.items, [person.id]: person }
     const newSort = Object.keys(newItems)
@@ -47,14 +47,14 @@ class Persistence {
     this.people = { items: newItems, sort: newSort }
   }
 
-  // update
+  // update person
   updatePerson(person) {
     const existingPerson = this.getPerson(person['id'])
     const updatedPerson = { ...existingPerson, ...person }
     this.addPerson(updatedPerson)
   }
   
-  // delete
+  // delete person
   deletePerson(id) {
     const newSort = this.people.sort.filter(existingId => existingId !== id)
     const newItems = newSort.map(id => this.people.items[id])
@@ -79,7 +79,7 @@ class Persistence {
     return this.pets.items[id]
   }
 
-  // create
+  // create pet
   addPet(pet) {
     // dealing with this.people stuff
     const person = this.getPerson(pet['ownerId'])
