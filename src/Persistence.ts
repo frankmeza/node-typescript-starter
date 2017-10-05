@@ -30,54 +30,69 @@ class Persistence {
 
   // add new person
   addPerson(person) {
-    // create a new items object
-    //  using spread operator to suck in the previous items
-    //  and use computed property
-    //    to set the new person in by his id
-    const peopleItems = { ...this.people.items, [person.id]: person }
-    
-    // given the new items object
-    //  flatten into array of persons
-    //  use sort function to sort the array of persons by name
-    //  use map to convert sorted array of person into array of id
-    //    use this as new sort array
-    const peopleArray = Object.keys(peopleItems)
+    const people = { ...this.people.items, [person.id]: person }
+    const newArray = Object.keys(people)
       .sort()
-      .map(p => peopleItems[p]['id'])
+      .map(p => people[p]['id'])
+
+    this.people = { items: people, sort: newArray }
+  }
+
+  // delete existing person
+  deletePerson(id) {
+    const people = { ...this.people.items }
+    const newArray = Object.keys(people)
+      .sort()
+      .map(person => people[person])
+      .filter(person => person.id !== id)
     
-    // given new items object and new sort array
-    // construct a new people object
-    // set this.people = this new object
-    this.people = { items: peopleItems, sort: peopleArray }
+    const newItems = newArray.reduce((accumulator, person) => {
+      if (person.id !== id) {
+        return { ...accumulator, [person.id]: person }
+      }
+      return accumulator
+    }, {})
+
+    const newSort = newArray.map(user => user.id)
+
+    this.people = { items: newItems, sort: newSort }
   }
 
   // // PETS
   
-  getPetsByPersonId(id) {
-    return this.people.items[id]['pets']
+  getPetsByPersonId(personId) {
+    const pets = { ...this.pets.items }
+    const petsArray = Object.keys(pets)
+      .sort()
+      .map(pet => pets[pet])
+      .filter(pet => pet.ownerId !== personId)
+
+    return petsArray
   }
   
   addPet(pet) {
+    // dealing with this.people stuff
+
     // instantiate a new person
     const person = this.getPerson(pet['ownerId'])
+    
     // update the person with the new pet information
-    const updatedPerson = { ...person, pets: [ ...person.pets, pet.id ] }
+    const updatedPerson = { ...person, pets: [...person.pets, pet.id] }
+    
     // instantiate a new people items, and add in the new updated person
     const peopleItems = { ...this.people.items, [person.id]: updatedPerson }
+    
     // reassign this.people
     this.people = { items: peopleItems, sort: this.people.sort }
+
+    // dealing with this.pets stuff
+    const petItems = { ...this.pets.items, [pet.id]: pet }
+    const petArray = Object.keys(petItems)
+      .sort()
+      .map(p => petItems[p]['id'])
+
+    this.pets = { items: petItems, sort: petArray }
   }
-
-  // delete person by id
-  // deletePerson(id) {
-  //   const people = this.people
-  //   const peopleObject = { ...people }
-
-  //   delete peopleObject.items[id]
-  //   peopleObject.sort.filter(person => person.id !== id)
-  //   return peopleObject
-  // }
-
 }
 
 export default Persistence

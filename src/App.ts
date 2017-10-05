@@ -10,7 +10,6 @@ class App {
     this.express = express()
     this.express.use(bodyParser.urlencoded({ extended: false }))
     this.express.use(bodyParser.json())
-
     this.persistence = new Persistence()
     this.mountRoutes()
   }
@@ -37,6 +36,12 @@ class App {
       res.json({good: true})
     })
     
+    router.delete('/person/:id', (req, res) => {
+      const id = req.params.id
+      const updatedPeopleList = this.persistence.deletePerson(id)
+      res.json(updatedPeopleList)
+    })
+
 // // PETS
 
     router.get('/person/:id/pets', (req, res) => {
@@ -49,12 +54,6 @@ class App {
       const obj = this.persistence.addPet(pet)
       res.json(obj)
     })
-
-    // router.delete('/person/:id', (req, res) => {
-    //   const id = req.params.id
-    //   const updatedPeopleList = this.persistence.deletePerson(id)
-    //   res.json(updatedPeopleList)
-    // })
 
     this.express.use('/', router)
   }
