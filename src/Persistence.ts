@@ -83,7 +83,9 @@ class Persistence {
   addPet(pet) {
     // dealing with this.people stuff
     const person = this.getPerson(pet['ownerId'])
-    const updatedPerson = { ...person, pets: [...person.pets, pet.id] }
+    // check if pet id is already in person.pets to avoid duplicates
+    const petIds = person.pets.includes(pet.id) ? [...person.pets] : [...person.pets, pet.id]
+    const updatedPerson = { ...person, pets: petIds }
     const newItems = { ...this.people.items, [person.id]: updatedPerson }
     this.people = { items: newItems, sort: this.people.sort }
     
@@ -108,8 +110,8 @@ class Persistence {
     // dealing with this.people stuff
     const pet = this.getPet(id)
     const person = this.getPerson(pet['ownerId'])
-    const updatedPersonPets = person.pets.filter(pet => pet.id !== id)
-    const newPerson = { ...person, pets: updatedPersonPets }
+    const updatedPets = person.pets.filter(petId => petId !== id)
+    const newPerson = { ...person, pets: updatedPets }
     this.updatePerson(newPerson)
 
     // dealing with this.pets stuff
