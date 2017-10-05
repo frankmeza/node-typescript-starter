@@ -79,7 +79,7 @@ class Persistence {
     const petsArray = Object.keys(pets)
       .sort()
       .map(pet => pets[pet])
-      .filter(pet => pet.ownerId !== personId)
+      .filter(pet => pet.ownerId === personId)
 
     return petsArray
   }
