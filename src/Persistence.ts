@@ -6,6 +6,9 @@ class Persistence {
     this.getPeople = this.getPeople.bind(this)
     this.addPerson = this.addPerson.bind(this)
     this.getPerson = this.getPerson.bind(this)
+    this.updatePerson = this.updatePerson.bind(this)
+    this.deletePerson = this.deletePerson.bind(this)
+    
     this.addPet = this.addPet.bind(this)
 
     this.people = {
@@ -18,17 +21,18 @@ class Persistence {
     }
   }
 
-  // return all people
+  // PEOPLE
+  // index
   getPeople() {
     return this.people
   }
 
-  // get person by id
+  // show
   getPerson(id) {
     return this.people.items[id]
   }
 
-  // add new person
+  // create
   addPerson(person) {
     const people = { ...this.people.items, [person.id]: person }
     const newArray = Object.keys(people)
@@ -38,7 +42,16 @@ class Persistence {
     this.people = { items: people, sort: newArray }
   }
 
-  // delete existing person
+  // update
+  updatePerson(id, updatedAttributes) {
+    // fetch a copy of the person to be updated
+    const person = this.getPerson(id)
+    // merge them like nic cage and john travolta in FaceOff
+    const updatedPerson = Object.assign(person, updatedAttributes)
+    this.addPerson(updatedPerson)
+  }
+
+  // delete
   deletePerson(id) {
     const people = { ...this.people.items }
     const newArray = Object.keys(people)
@@ -58,8 +71,9 @@ class Persistence {
     this.people = { items: newItems, sort: newSort }
   }
 
-  // // PETS
+  // PETS
   
+  // index per person
   getPetsByPersonId(personId) {
     const pets = { ...this.pets.items }
     const petsArray = Object.keys(pets)
@@ -70,6 +84,7 @@ class Persistence {
     return petsArray
   }
   
+  // create
   addPet(pet) {
     // dealing with this.people stuff
 
