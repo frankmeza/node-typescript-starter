@@ -40,7 +40,7 @@ class App {
       res.json({good: true})
     })
     
-    // put person
+    // update person
     router.put('/person', (req, res) => {
       const updatedAttributes = req.body
       const updatedPerson = this.persistence.updatePerson(updatedAttributes)
@@ -81,7 +81,7 @@ class App {
       res.json(obj)
     })
     
-    // put pet
+    // update pet
     router.put('/pets', (req, res) => {
       const updatedAttributes = req.body
       this.persistence.updatePet(updatedAttributes)

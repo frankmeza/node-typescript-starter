@@ -11,6 +11,7 @@ class Persistence {
     
     this.addPet = this.addPet.bind(this)
     this.getPet = this.getPet.bind(this)
+    this.getPets = this.getPets.bind(this)
     this.getPetsByPersonId = this.getPetsByPersonId.bind(this)
     this.updatePet = this.updatePet.bind(this)
     this.deletePet = this.deletePet.bind(this)
@@ -28,6 +29,7 @@ class Persistence {
   // PEOPLE
   // index
   getPeople() {
+    // todo - return an array of [ {person}, {person}, {person} .... ] sorted by people.sort
     return this.people
   }
 
@@ -38,32 +40,33 @@ class Persistence {
 
   // create
   addPerson(person) {
-    const people = { ...this.people.items, [person.id]: person }
-    const newArray = Object.keys(people)
+    const newItems = { ...this.people.items, [person.id]: person }
+    const newSort = Object.keys(newItems)
       .sort()
-      .map(p => people[p]['id'])
+      .map(p => newItems[p]['id'])
 
-    this.people = { items: people, sort: newArray }
+    this.people = { items: newItems, sort: newSort }
   }
 
   // update
-  updatePerson(id, updatedAttributes) {
-    // fetch a copy of the person to be updated
-    const person = this.getPerson(id)
-    // merge them like nic cage and john travolta in FaceOff
-    const updatedPerson = Object.assign({}, person, updatedAttributes)
-    // const updatedPerson = Object.assign(person, updatedAttributes) // mutating?
+  // todo - rename updatedAttributes -> person
+  updatePerson(updatedAttributes) {
+    const person = this.getPerson(updatedAttributes['id'])
+    const updatedPerson = { ...person, ...updatedAttributes }
     this.addPerson(updatedPerson)
   }
   
   // delete
   deletePerson(id) {
+    // todo - rename people -> newItems
     const people = { ...this.people.items }
+    // todo - rename newArray -> newSort
     const newArray = Object.keys(people)
       .sort()
+      // todo - rename this to personId or something
       .map(person => people[person])
       .filter(person => person.id !== id)
-    
+
     const newItems = newArray.reduce((accumulator, person) => {
       if (person.id !== id) {
         return { ...accumulator, [person.id]: person }
@@ -71,12 +74,23 @@ class Persistence {
       return accumulator
     }, {})
     
+
     const newSort = newArray.map(user => user.id)
     
+    // alternative:
+    // const newSort = this.people.sort.filter( existingId => existingId != id )
+    // const newItems = newSort.map( id => this.people.items[id] )
+
     this.people = { items: newItems, sort: newSort }
   }
   
   // PETS
+
+  // index
+  getPets() {
+    // todo - return [ {pet}, {pet}, ...]
+    return this.pets.items
+  }
 
   // index per person
   getPetsByPersonId(personId) {
@@ -86,6 +100,9 @@ class Persistence {
       .map(pet => pets[pet])
       .filter(pet => pet.ownerId === personId)
     
+    // get the person using getPerson(personId)
+    // map over person.pets -> turn into real pets
+
     return petsArray
   }
   
@@ -97,42 +114,53 @@ class Persistence {
   // create
   addPet(pet) {
     // dealing with this.people stuff
-    // instantiate a new person
     const person = this.getPerson(pet['ownerId'])
-    // update the person with the new pet information
     const updatedPerson = { ...person, pets: [...person.pets, pet.id] }
-    // instantiate a new people items, and add in the new updated person
     const peopleItems = { ...this.people.items, [person.id]: updatedPerson }
-    // reassign this.people
     this.people = { items: peopleItems, sort: this.people.sort }
     
     // dealing with this.pets stuff
     const petItems = { ...this.pets.items, [pet.id]: pet }
     const petArray = Object.keys(petItems)
-      .sort()
-      .map(p => petItems[p]['id'])
+    .sort()
+    .map(p => petItems[p]['id'])
     
     this.pets = { items: petItems, sort: petArray }
   }
   
   // update pet
-  updatePet(id, updatedAttributes) {
-    const pet = this.getPet(id)
-    // const updatedPet = Object.assign(pet, updatedAttributes)
-    // if owner already has pet with this name 
-    //   update it else add it
-    const updatedPet = { ...pet, updatedAttributes } // perhaps?
+  // todo - rename
+  updatePet(updatedAttributes) {
+    const pet = this.getPet(updatedAttributes['id'])
+    const updatedPet = { ...pet, ...updatedAttributes }
     this.addPet(updatedPet)
   }
-
+  
   // delete pet
   deletePet(id) {
+    // dealing with this.people stuff
+    const pet = this.getPet(id)
+    // find the id of the associated person
+    // get the person object using existing function by person id
+    const person = this.getPerson(pet['ownerId'])
+    // get a reference to the array of pets from the person
+    // use filter to create shortened list of pet ids, 
+    //  where the function returns false on the deleted pet's id
+    const updatedPersonPets = person.pets.filter(pet => pet.id === id)
+    // create updated person object using spread operator, but
+    //   inject the shortened list of pet ids
+    const newPerson = { ...person, pets: updatedPersonPets }
+    // call existing updatePerson function with the newly created updated person
+    this.updatePerson(newPerson)
+
+    // dealing with this.pets stuff
+    // todo - see person delete for simplification
     const pets = { ...this.pets.items }
     const newArray = Object.keys(pets)
-      .sort()
-      .map(pet => pets[pet])
-      .filter(pet => pet.id !== id)
-
+    .sort()
+    .map(pet => pets[pet])
+    .filter(pet => pet.id === id)
+    
     const newSort = newArray.map(pet => pet.id)
     const newItems = newArray.reduce((accumulator, pet) => {
       if (pet.id !== id) {
@@ -140,7 +168,7 @@ class Persistence {
       }
       return accumulator
     }, {})
-
+    
     this.pets = { items: newItems, sort: newSort }
   }
 }
