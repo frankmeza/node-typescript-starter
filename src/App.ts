@@ -60,38 +60,40 @@ class App {
     // PETS
     // index pets
     router.get('/pets', (req: express.Request, res: express.Response) => {
-      res.json(this.persistence.getPets())
+      const pets: Pet[] = this.persistence.getPets()
+      res.json(pets)
     })
     
     // index pets per person
     router.get('/persons/:id/pets', (req: express.Request, res: express.Response) => {
-      const id = req.params.id
-      res.json(this.persistence.getPetsByPersonId(id))
+      const id: string = req.params.id
+      const pets: Pet[] = this.persistence.getPetsByPersonId(id)
+      res.json(pets)
     })
 
     // show pet
     router.get('/pets/:id', (req: express.Request, res: express.Response) => {
-      const id = req.params.id
+      const id: string = req.params.id
       res.json(this.persistence.getPet(id))
     })
     
     // create pet
     router.post('/pets', (req: express.Request, res: express.Response) => {
-      const pet = req.body
-      this.persistence.addPet(pet) 
-      res.sendStatus(201)
+      const pet: Pet = req.body
+      res.json(this.persistence.addPet(pet))
+      // res.sendStatus(201)
     })
     
     // update pet
     router.put('/pets', (req: express.Request, res: express.Response) => {
-      const pet = req.body
+      const pet: Pet = req.body
       this.persistence.updatePet(pet)
       res.sendStatus(204)
     })
     
     // delete pet
     router.delete('/pets/:id', (req: express.Request, res: express.Response) => {
-      const id = req.params.id
+      const id: string = req.params.id
       this.persistence.deletePet(id)
       res.sendStatus(204)
     })

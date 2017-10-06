@@ -47,6 +47,7 @@ class Persistence {
       items: {},
       sort: [],
     }
+
     this.pets = {
       items: {},
       sort: [],
@@ -67,7 +68,7 @@ class Persistence {
   // create person
   addPerson(person: Person): void {
     const newItems: PeopleItems = { ...this.people.items, [person.id]: person }
-    const newSort = Object.keys(newItems)
+    const newSort: string[] = Object.keys(newItems)
       .sort()
       .map(p => newItems[p]['id'])
 
@@ -78,74 +79,81 @@ class Persistence {
   updatePerson(person: Person): void {
     const existingPerson: Person = this.getPerson(person['id'])
     const updatedPerson: Person = { ...existingPerson, ...person }
+    
     this.addPerson(updatedPerson)
   }
   
   // delete person
   deletePerson(id: string): void {
     const newSort: string[] = this.people.sort.filter(existingId => existingId !== id)
+    
     const newItems: PeopleItems = newSort
       .map(id => this.people.items[id])
       .reduce((acc, person) => ({ ...acc, [person.id]: person }), {})
+    
     this.people = { items: newItems, sort: newSort }
   }
   
   // PETS
 
   // index
-  getPets() {
+  getPets(): Pet[] {
     return this.pets.sort.map(id => this.getPet(id))
   }
 
   // index per person
-  getPetsByPersonId(personId) {
-    const person = this.getPerson(personId)
+  getPetsByPersonId(personId: string): Pet[] {
+    const person: Person = this.getPerson(personId)
     return person['pets'].map(petId => this.getPet(petId))
   }
   
   // show pet
-  getPet(id) {
+  getPet(id: string): Pet {
     return this.pets.items[id]
   }
 
   // create pet
-  addPet(pet) {
+  addPet(pet: Pet): string[] {
     // dealing with this.people stuff
-    const person = this.getPerson(pet['ownerId'])
+    const person: Person = this.getPerson(pet['ownerId'])
     // check if pet id is already in person.pets to avoid duplicates
-    const petIds = person.pets.filter(petId => petId !== pet.id)
-    const updatedPerson = { ...person, pets: petIds }
-    const newItems = { ...this.people.items, [person.id]: updatedPerson }
+    const existingPet = person.pets.find(p => p === pet.id)
+    const petIds: string[] = existingPet ? [...person.pets] : [...person.pets, pet.id]
+
+    const updatedPerson: Person = { ...person, pets: petIds }
+    const newItems: PeopleItems = { ...this.people.items, [person.id]: updatedPerson }
+
     this.people = { items: newItems, sort: this.people.sort }
     
     // dealing with this.pets stuff
-    const petItems = { ...this.pets.items, [pet.id]: pet }
-    const petArray = Object.keys(petItems)
+    const newPetItems: PetItems = { ...this.pets.items, [pet.id]: pet }
+    const newPetSort: string[] = Object.keys(newPetItems)
       .sort()
-      .map(p => petItems[p]['id'])
+      .map(p => newPetItems[p]['id'])
     
-    this.pets = { items: petItems, sort: petArray }
+    this.pets = { items: newPetItems, sort: newPetSort }
+    return petIds
   }
   
   // update pet
-  updatePet(pet) {
-    const currentPet = this.getPet(pet['id'])
-    const updatedPet = { ...currentPet, ...pet }
+  updatePet(pet: Pet): void {
+    const currentPet: Pet = this.getPet(pet['id'])
+    const updatedPet: Pet = { ...currentPet, ...pet }
     this.addPet(updatedPet)
   }
 
   // delete pet
-  deletePet(id) {
+  deletePet(id: string): void {
     // dealing with this.people stuff
-    const pet = this.getPet(id)
-    const person = this.getPerson(pet['ownerId'])
-    const updatedPets = person.pets.filter(petId => petId !== id)
-    const newPerson = { ...person, pets: updatedPets }
+    const pet: Pet = this.getPet(id)
+    const person: Person = this.getPerson(pet['ownerId'])
+    const updatedPetIds: string[] = person.pets.filter(petId => petId !== id)
+    const newPerson: Person = { ...person, pets: updatedPetIds }
     this.updatePerson(newPerson)
 
     // dealing with this.pets stuff
-    const newSort = this.pets.sort.filter(existingId => existingId !== id)
-    const newItems = newSort
+    const newSort: string[] = this.pets.sort.filter(existingId => existingId !== id)
+    const newItems: PetItems = newSort
       .map(id => this.getPet(id))
       .reduce((acc, pet) => ({ ...acc, [pet.id]: pet}), {})
     this.pets = { items: newItems, sort: newSort }
