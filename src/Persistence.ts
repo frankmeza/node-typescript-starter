@@ -13,7 +13,8 @@ export interface Person {
   pets: string[]
 }
 
-interface People extends Collection<Person> {}
+interface PeopleItems extends CollectionItems<Person> {}
+export interface People extends Collection<Person> {}
 
 export interface Pet {
   id: string
@@ -21,7 +22,8 @@ export interface Pet {
   ownerId: string
 }
 
-interface Pets extends Collection<Pet> {}
+interface PetItems extends CollectionItems<Pet> {}
+export interface Pets extends Collection<Pet> {}
 
 class Persistence {
   people: People
@@ -53,18 +55,18 @@ class Persistence {
 
   // PEOPLE
   // index 
-  getPeople() {
-    return this.people.sort.map(id => this.getPerson(id))
+  getPeople(): Person[] {
+    return this.people.sort.map(id => this.getPerson(id)) 
   }
 
   // show person
-  getPerson(id) {
+  getPerson(id: string): Person {
     return this.people.items[id]
   }
 
   // create person
-  addPerson(person) {
-    const newItems = { ...this.people.items, [person.id]: person }
+  addPerson(person: Person): void {
+    const newItems: PeopleItems = { ...this.people.items, [person.id]: person }
     const newSort = Object.keys(newItems)
       .sort()
       .map(p => newItems[p]['id'])
@@ -73,16 +75,16 @@ class Persistence {
   }
 
   // update person
-  updatePerson(person) {
-    const existingPerson = this.getPerson(person['id'])
-    const updatedPerson = { ...existingPerson, ...person }
+  updatePerson(person: Person): void {
+    const existingPerson: Person = this.getPerson(person['id'])
+    const updatedPerson: Person = { ...existingPerson, ...person }
     this.addPerson(updatedPerson)
   }
   
   // delete person
-  deletePerson(id) {
-    const newSort = this.people.sort.filter(existingId => existingId !== id)
-    const newItems = newSort
+  deletePerson(id: string): void {
+    const newSort: string[] = this.people.sort.filter(existingId => existingId !== id)
+    const newItems: PeopleItems = newSort
       .map(id => this.people.items[id])
       .reduce((acc, person) => ({ ...acc, [person.id]: person }), {})
     this.people = { items: newItems, sort: newSort }
