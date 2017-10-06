@@ -144,3 +144,5 @@ GET http://localhost:3000/persons
 // returns response with status 200:
 []
 ```
+
+![the circle of life](http://www.cornel1801.com/disney/Lion-King-Circle-of-Life/on-the-path-unwinding-in-the-circle-of-life.jpg "The Circle of Life")
