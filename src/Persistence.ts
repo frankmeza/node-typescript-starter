@@ -1,6 +1,31 @@
+interface CollectionItems<T> {
+  [key: string]: T
+}
+
+interface Collection<T> {
+  items: CollectionItems<T>
+  sort: string[]
+}
+
+interface Person {
+  id: string
+  name: string
+  pets: string[]
+}
+
+interface People extends Collection<Person> {}
+
+interface Pet {
+  id: string
+  name: string
+  ownerId: string
+}
+
+interface Pets extends Collection<Pet> {}
+
 class Persistence {
-  people
-  pets
+  people: People
+  pets: Pets
 
   constructor() {
     this.getPeople = this.getPeople.bind(this)
