@@ -1,5 +1,5 @@
 interface CollectionItems<T> {
-  [key: string]: T
+  [key: string]: T 
 }
 
 interface Collection<T> {
@@ -7,7 +7,7 @@ interface Collection<T> {
   sort: string[]
 }
 
-interface Person {
+export interface Person {
   id: string
   name: string
   pets: string[]
@@ -15,7 +15,7 @@ interface Person {
 
 interface People extends Collection<Person> {}
 
-interface Pet {
+export interface Pet {
   id: string
   name: string
   ownerId: string
@@ -82,7 +82,9 @@ class Persistence {
   // delete person
   deletePerson(id) {
     const newSort = this.people.sort.filter(existingId => existingId !== id)
-    const newItems = newSort.map(id => this.people.items[id])
+    const newItems = newSort
+      .map(id => this.people.items[id])
+      .reduce((acc, person) => ({ ...acc, [person.id]: person }), {})
     this.people = { items: newItems, sort: newSort }
   }
   
@@ -109,7 +111,7 @@ class Persistence {
     // dealing with this.people stuff
     const person = this.getPerson(pet['ownerId'])
     // check if pet id is already in person.pets to avoid duplicates
-    const petIds = person.pets.includes(pet.id) ? [...person.pets] : [...person.pets, pet.id]
+    const petIds = person.pets.filter(petId => petId !== pet.id)
     const updatedPerson = { ...person, pets: petIds }
     const newItems = { ...this.people.items, [person.id]: updatedPerson }
     this.people = { items: newItems, sort: this.people.sort }
@@ -129,7 +131,7 @@ class Persistence {
     const updatedPet = { ...currentPet, ...pet }
     this.addPet(updatedPet)
   }
-  
+
   // delete pet
   deletePet(id) {
     // dealing with this.people stuff
@@ -140,8 +142,10 @@ class Persistence {
     this.updatePerson(newPerson)
 
     // dealing with this.pets stuff
-    const newSort = this.pets.sort.map(existingId => existingId !== id)
-    const newItems = newSort.map(id => this.getPet(id))
+    const newSort = this.pets.sort.filter(existingId => existingId !== id)
+    const newItems = newSort
+      .map(id => this.getPet(id))
+      .reduce((acc, pet) => ({ ...acc, [pet.id]: pet}), {})
     this.pets = { items: newItems, sort: newSort }
   }
 }
