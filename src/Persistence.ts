@@ -59,12 +59,25 @@ class Persistence {
   }
 
   // GENERIC FUNCTIONS
+  // show
   get<T>(key: string, id: string): T {
     return this[key].items[id]
   }
 
+  // index
   getIndex<T>(key: string): T[] {
     return this[key].sort.map(id => this.get<T>(key, id))
+  }
+
+  // create
+  add<T>(key: string, type: T): void {
+    const id: string = type['id']
+    const newItems: CollectionItems<T> = { ...this[key].items, [id]: type }
+    const newSort: string[] = Object.keys(newItems)
+      .sort()
+      .map(type => newItems[type]['id'])
+
+    this[key] = { items: newItems, sort: newSort }
   }
 
   // PEOPLE

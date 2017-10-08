@@ -39,7 +39,7 @@ class App {
     // create person
     router.post('/persons', (req: express.Request, res: express.Response) => {
       const person: Person = req.body
-      this.persistence.addPerson(person)
+      this.persistence.add<Person>('people', person)
       res.sendStatus(201)
     })
 
