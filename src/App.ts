@@ -46,7 +46,6 @@ class App {
     // update person
     router.put('/persons', (req: express.Request, res: express.Response) => {
       const person: Person = req.body
-      // const instance: Person = this.persistence.update('people', person)
       this.persistence.update<Person>('people', person)
       res.sendStatus(204)
     })
@@ -54,7 +53,8 @@ class App {
     // delete person
     router.delete('/persons/:id', (req: express.Request, res: express.Response) => {
       const id: string = req.params.id
-      this.persistence.deletePerson(id)
+      // this.persistence.deletePerson(id)
+      this.persistence.delete<Person>('people', id)
       res.sendStatus(204)
     })
 

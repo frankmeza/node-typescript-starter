@@ -89,6 +89,16 @@ class Persistence {
     this.add<T>(key, updatedInstance)
   }
 
+  delete<T>(key: string, id: string): void {
+    const newSort: string[] = this[key].sort.filter(existingId => existingId !== id)
+
+    const newItems: CollectionItems<T> = newSort
+      .map(id => this[key].items[id])
+      .reduce((acc, type) => ({ ...acc, [type.id]: type }), {})
+
+    this[key] = { items: newItems, sort: newSort }
+  }
+
   // PEOPLE
   // index
   getPeople(): Person[] {
