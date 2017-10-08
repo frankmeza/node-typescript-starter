@@ -46,7 +46,8 @@ class App {
     // update person
     router.put('/persons', (req: express.Request, res: express.Response) => {
       const person: Person = req.body
-      this.persistence.updatePerson(person)
+      this.persistence.update('people', person)
+      // this.persistence.updatePerson(person)
       res.sendStatus(204)
     })
 

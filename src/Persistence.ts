@@ -80,6 +80,13 @@ class Persistence {
     this[key] = { items: newItems, sort: newSort }
   }
 
+  // update
+  update<T>(key: string, type: T){
+    const id: string = type['id']
+    const instance: T = this.get<T>(key, id)
+    this.add<T>(key, instance)
+  }
+
   // PEOPLE
   // index
   getPeople(): Person[] {
