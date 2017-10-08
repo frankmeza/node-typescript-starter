@@ -45,6 +45,7 @@ class Persistence {
 
     // generic functions
     this.get = this.get.bind(this)
+    this.getIndex = this.getIndex.bind(this)
 
     this.people = {
       items: {},
@@ -60,6 +61,10 @@ class Persistence {
   // GENERIC FUNCTIONS
   get<T>(key: string, id: string): T {
     return this[key].items[id]
+  }
+
+  getIndex<T>(key: string): T[] {
+    return this[key].sort.map(id => this.get<T>(key, id))
   }
 
   // PEOPLE

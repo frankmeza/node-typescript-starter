@@ -25,7 +25,7 @@ class App {
     // PEOPLE
     // index people
     router.get('/persons', (req: express.Request, res: express.Response) => {
-      const people: Person[] = this.persistence.getPeople()
+      const people: Person[] = this.persistence.getIndex<Person>('people')
       res.json(people)
     })
 
@@ -60,7 +60,7 @@ class App {
     // PETS
     // index pets
     router.get('/pets', (req: express.Request, res: express.Response) => {
-      const pets: Pet[] = this.persistence.getPets()
+      const pets: Pet[] = this.persistence.getIndex<Pet>('pets')
       res.json(pets)
     })
 
