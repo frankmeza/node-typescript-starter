@@ -84,7 +84,9 @@ class Persistence {
   update<T>(key: string, type: T){
     const id: string = type['id']
     const instance: T = this.get<T>(key, id)
-    this.add<T>(key, instance)
+    const updatedInstance: T = { ...instance, ...type }
+
+    this.add<T>(key, updatedInstance)
   }
 
   // PEOPLE
