@@ -40,7 +40,6 @@ class App {
     router.post('/persons', (req: express.Request, res: express.Response) => {
       const person: Person = req.body
       this.persistence.addPerson(person)
-      
       res.sendStatus(201)
     })
 
@@ -61,7 +60,7 @@ class App {
     // PETS
     // index pets
     router.get('/pets', (req: express.Request, res: express.Response) => {
-      const pets: Pet[] = this.persistence.getIndex<Pet>('pets')
+      const pets: Pet[] = this.persistence.getPets()
       res.json(pets)
     })
 
@@ -75,15 +74,15 @@ class App {
     // show pet
     router.get('/pets/:id', (req: express.Request, res: express.Response) => {
       const id: string = req.params.id
-      const pet: Pet = this.persistence.get<Pet>('pets', id)
+      const pet: Pet = this.persistence.getPet(id)
       res.json(pet)
     })
 
     // create pet
     router.post('/pets', (req: express.Request, res: express.Response) => {
       const pet: Pet = req.body
-      res.json(this.persistence.addPet(pet))
-      // res.sendStatus(201)
+      this.persistence.addPet(pet)
+      res.sendStatus(201)
     })
 
     // update pet
