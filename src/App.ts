@@ -53,7 +53,6 @@ class App {
     // delete person
     router.delete('/persons/:id', (req: express.Request, res: express.Response) => {
       const id: string = req.params.id
-      // this.persistence.deletePerson(id)
       this.persistence.delete<Person>('people', id)
       res.sendStatus(204)
     })

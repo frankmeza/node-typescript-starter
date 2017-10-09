@@ -46,6 +46,8 @@ class Persistence {
     // generic functions
     this.get = this.get.bind(this)
     this.getIndex = this.getIndex.bind(this)
+    this.update = this.update.bind(this)
+    this.delete = this.delete.bind(this)
 
     this.people = {
       items: {},
