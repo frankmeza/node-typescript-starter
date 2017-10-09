@@ -25,35 +25,36 @@ class App {
     // PEOPLE
     // index people
     router.get('/persons', (req: express.Request, res: express.Response) => {
-      const people: Person[] = this.persistence.getIndex<Person>('people')
+      const people: Person[] = this.persistence.getPeople()
       res.json(people)
     })
 
     // show person
     router.get('/persons/:id', (req: express.Request, res: express.Response) => {
       const id: string = req.params.id
-      const person: Person = this.persistence.get<Person>('people', id)
+      const person: Person = this.persistence.getPerson(id)
       res.json(person)
     })
 
     // create person
     router.post('/persons', (req: express.Request, res: express.Response) => {
       const person: Person = req.body
-      this.persistence.add<Person>('people', person)
+      this.persistence.addPerson(person)
+      
       res.sendStatus(201)
     })
 
     // update person
     router.put('/persons', (req: express.Request, res: express.Response) => {
       const person: Person = req.body
-      this.persistence.update<Person>('people', person)
+      this.persistence.updatePerson(person)
       res.sendStatus(204)
     })
 
     // delete person
     router.delete('/persons/:id', (req: express.Request, res: express.Response) => {
       const id: string = req.params.id
-      this.persistence.delete<Person>('people', id)
+      this.persistence.deletePerson(id)
       res.sendStatus(204)
     })
 

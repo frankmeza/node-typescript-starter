@@ -104,41 +104,27 @@ class Persistence {
   // PEOPLE
   // index
   getPeople(): Person[] {
-    return this.people.sort.map(id => this.getPerson(id))
+    return this.getIndex<Person>('people')
   }
 
   // show person
   getPerson(id: string): Person {
-    return this.people.items[id]
+    return this.get<Person>('people', id)
   }
 
   // create person
   addPerson(person: Person): void {
-    const newItems: PeopleItems = { ...this.people.items, [person.id]: person }
-    const newSort: string[] = Object.keys(newItems)
-      .sort()
-      .map(p => newItems[p]['id'])
-
-    this.people = { items: newItems, sort: newSort }
+    this.add<Person>('people', person)
   }
 
   // update person
   updatePerson(person: Person): void {
-    const existingPerson: Person = this.getPerson(person['id'])
-    const updatedPerson: Person = { ...existingPerson, ...person }
-
-    this.addPerson(updatedPerson)
+    this.update<Person>('people', person)
   }
 
   // delete person
   deletePerson(id: string): void {
-    const newSort: string[] = this.people.sort.filter(existingId => existingId !== id)
-
-    const newItems: PeopleItems = newSort
-      .map(id => this.people.items[id])
-      .reduce((acc, person) => ({ ...acc, [person.id]: person }), {})
-
-    this.people = { items: newItems, sort: newSort }
+    this.delete<Person>('people', id)
   }
 
   // PETS
