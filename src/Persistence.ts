@@ -83,7 +83,8 @@ class Persistence {
   update<T extends Entity, C extends Collection<T>>(collection: C, entity: T): Collection<T> {
     const id: string = entity.id
     const existingEntity: T = collection.items[id]
-    const updatedInstance: T = { ...existingEntity, ...entity }
+    // const updatedInstance: T = { ...existingEntity, ...entity }
+    const updatedInstance: T = Object.assign({}, existingEntity, entity)
 
     return this.add<T, C>(collection, updatedInstance)
   }
