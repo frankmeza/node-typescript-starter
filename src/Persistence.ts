@@ -7,18 +7,19 @@ interface Collection<T> {
   sort: string[]
 }
 
-export interface Person {
+interface Entity {
   id: string
   name: string
+}
+
+export interface Person extends Entity {
   pets: string[]
 }
 
 interface PeopleItems extends CollectionItems<Person> {}
 export interface People extends Collection<Person> {}
 
-export interface Pet {
-  id: string
-  name: string
+export interface Pet extends Entity {
   ownerId: string
 }
 
@@ -44,7 +45,6 @@ class Persistence {
     this.deletePet = this.deletePet.bind(this)
 
     // generic functions
-    this.get = this.get.bind(this)
     this.getIndex = this.getIndex.bind(this)
     this.update = this.update.bind(this)
     this.delete = this.delete.bind(this)
@@ -62,76 +62,73 @@ class Persistence {
 
   // GENERIC FUNCTIONS
   // show
-  get<T>(key: string, id: string): T {
-    return this[key].items[id]
-  }
 
   // index
-  getIndex<T>(key: string): T[] {
-    return this[key].sort.map(id => this.get<T>(key, id))
+  getIndex<T extends Entity, C extends Collection<T>>(collection: C): T[] {
+    return collection.sort.map(id => collection.items[id])
   }
 
   // create
-  add<T>(key: string, type: T): void {
-    const id: string = type['id']
-    const newItems: CollectionItems<T> = { ...this[key].items, [id]: type }
+  add<T extends Entity, C extends Collection<T>>(collection: C, entity: T): Collection<T> {
+    const id: string = entity.id
+    const newItems: CollectionItems<T> = { ...collection.items, [id]: entity }
     const newSort: string[] = Object.keys(newItems)
       .sort()
       .map(type => newItems[type]['id'])
 
-    this[key] = { items: newItems, sort: newSort }
+    return { items: newItems, sort: newSort }
   }
 
   // update
-  update<T>(key: string, type: T){
-    const id: string = type['id']
-    const instance: T = this.get<T>(key, id)
-    const updatedInstance: T = { ...instance, ...type }
+  update<T extends Entity, C extends Collection<T>>(collection: C, entity: T): Collection<T> {
+    const id: string = entity.id
+    const existingEntity: T = collection.items[id]
+    const updatedInstance: T = { ...existingEntity, ...entity }
 
-    this.add<T>(key, updatedInstance)
+    return this.add<T, C>(collection, updatedInstance)
   }
 
-  delete<T>(key: string, id: string): void {
-    const newSort: string[] = this[key].sort.filter(existingId => existingId !== id)
+  delete<T extends Entity, C extends Collection<T>>(collection: C, id: string): Collection<T> {
+    const newSort: string[] = collection.sort.filter(existingId => existingId !== id)
 
     const newItems: CollectionItems<T> = newSort
-      .map(id => this[key].items[id])
+      .map(id => collection.items[id])
       .reduce((acc, type) => ({ ...acc, [type.id]: type }), {})
 
-    this[key] = { items: newItems, sort: newSort }
+    return { items: newItems, sort: newSort }
   }
 
   // PEOPLE
   // index
   getPeople(): Person[] {
-    return this.getIndex<Person>('people')
+    return this.getIndex<Person, Collection<Person>>(this.people)
   }
 
   // show person
   getPerson(id: string): Person {
-    return this.get<Person>('people', id)
+    return this.people.items[id]
   }
 
   // create person
   addPerson(person: Person): void {
-    this.add<Person>('people', person)
+    this.people = this.add<Person, Collection<Person>>(this.people, person)
   }
 
   // update person
   updatePerson(person: Person): void {
-    this.update<Person>('people', person)
+    this.people = this.update<Person, Collection<Person>>(this.people, person)
   }
 
   // delete person
   deletePerson(id: string): void {
-    this.delete<Person>('people', id)
+    this.people = this.delete<Person, Collection<Person>>(this.people, id)
   }
 
   // PETS
 
   // index
   getPets(): Pet[] {
-    return this.getIndex<Pet>('pets')
+    return this.getIndex<Pet, Collection<Pet>>(this.pets)
   }
 
   // index per person
@@ -142,7 +139,7 @@ class Persistence {
 
   // show pet
   getPet(id: string): Pet {
-    return this.get<Pet>('pets', id)
+    return this.pets.items[id]
   }
 
   // create pet
@@ -159,12 +156,12 @@ class Persistence {
     this.people = { items: newItems, sort: this.people.sort }
     
     // dealing with this.pets stuff
-    this.add<Pet>('pets', pet)
+    this.pets = this.add<Pet, Collection<Pet>>(this.pets, pet)
   }
 
   // update pet
   updatePet(pet: Pet): void {
-    this.update<Pet>('pets', pet)
+    this.update<Pet, Collection<Pet>>(this.pets, pet)
   }
 
   // delete pet
@@ -177,7 +174,7 @@ class Persistence {
     this.updatePerson(newPerson)
     
     // dealing with this.pets stuff
-    this.delete<Pet>('pets', id)
+    this.pets = this.delete<Pet, Collection<Pet>>(this.pets, id)
   }
 }
 
